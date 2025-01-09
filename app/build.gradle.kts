@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.leo.unipiplishopping"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.leo.unipiplishopping"
