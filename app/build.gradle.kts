@@ -54,6 +54,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))      // Import BOM
     implementation(libs.firebase.firestore)          // Firestore
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
