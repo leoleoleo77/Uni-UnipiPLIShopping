@@ -1,6 +1,7 @@
 package com.leo.unipiplishopping.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -31,4 +32,15 @@ val Typography = Typography(
         letterSpacing = 0.5.sp
     )
     */
+)
+
+val DivaTypography = Typography(
+    //defaultFontFamily = FontFamily.Serif, // Customize your font family here
+    titleLarge = TextStyle(
+        fontFamily = FontFamily.Serif,
+        fontWeight = FontWeight.Bold,
+        color = Color.White,
+        fontSize = 32.sp,
+        letterSpacing = 2.sp
+    )
 )

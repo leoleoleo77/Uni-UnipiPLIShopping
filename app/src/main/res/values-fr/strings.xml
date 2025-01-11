@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">UnipiPLIShopping</string>
-    <string name="login">Log In</string>
+    <string name="login">Se connecter</string>
     <string name="email_label">Email</string>
     <string name="password_label">Password</string>
-    <string name="continue_label">Continue</string>
+    <string name="continue_label">ok</string>
     <string name="login_failed">Incorrect Credentials</string>
 </resources>
