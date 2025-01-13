@@ -1,8 +1,5 @@
 package com.leo.unipiplishopping.ui.theme
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -10,21 +7,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.leo.unipiplishopping.R
-import java.time.format.TextStyle
 
 private val DarkColorScheme = darkColorScheme(
     primary = primaryDark,
@@ -86,10 +75,9 @@ fun DivaTheme(content: @Composable () -> Unit) {
 fun DivaTextField(
     placeholderResource: Int,
     value: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    isPassword: Boolean = false
 ) {
-    //var input by remember { mutableStateOf(value) }
-
     TextField(
         modifier = Modifier
             .fillMaxWidth()
@@ -99,6 +87,7 @@ fun DivaTextField(
         placeholder = ({
             Text(text = stringResource(id = placeholderResource))
         }),
+        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         colors = TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.secondary, // Background color when focused
             unfocusedContainerColor = MaterialTheme.colorScheme.secondary, // Background color when unfocused

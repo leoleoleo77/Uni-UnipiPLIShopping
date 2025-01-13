@@ -5,4 +5,5 @@
     <string name="password_label">Password</string>
     <string name="continue_label">Continue</string>
     <string name="login_failed">Incorrect Credentials</string>
+    <string name="create_account_label">Create an account</string>
 </resources>

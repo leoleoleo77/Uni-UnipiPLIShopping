@@ -2,36 +2,32 @@ package com.leo.unipiplishopping.authentication
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.tasks.await
 
 class AuthUtils {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    fun attemptLogin(email: String, pass: String): AuthResult {
-        if (email.isNotEmpty() && pass.isNotEmpty()) {
-            val loginAttempt = auth.signInWithEmailAndPassword(email, pass)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val user = auth.currentUser
-                        Log.d("Auth", "Signed in with UID: ${user?.uid}")
-                    } else {
-                        Log.e("Auth", "Authentication failed: ${task.exception}")
-                    }
-                }
-            return if (loginAttempt.isSuccessful) {
+    suspend fun attemptLogin(email: String, pass: String): AuthResult {
+        return try {
+            if (email.isNotEmpty() && pass.isNotEmpty()) {
+                // Await the result of the sign-in task
+                auth.signInWithEmailAndPassword(email, pass).await()
                 AuthResult.Success
             } else {
-                AuthResult.Fail
+                Log.e("Auth", "Email or password is empty")
+                AuthResult.Error
             }
-        } else {
-            Log.e("Auth", "Authentication Error")
-            return AuthResult.Error
+        } catch (e: Exception) {
+            Log.e("Auth", "Authentication failed: ${e.message}")
+            AuthResult.Fail
         }
     }
 }
 
-enum class AuthResult {
-    Success,
-    Fail,
-    Error,
-    Unknown
+sealed class AuthResult {
+    data object Success : AuthResult()
+    data object Fail : AuthResult()
+    data object Error : AuthResult()
+    data object Unknown : AuthResult()
 }
+

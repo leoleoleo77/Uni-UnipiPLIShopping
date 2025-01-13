@@ -26,9 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 
 @Composable
-fun AuthenticationView() {
+fun AuthenticationView(navController: NavHostController) {
     // State to determine whether to show login or registration
     var isLoginScreen by remember { mutableStateOf(true) }
     val authAgent = AuthUtils()
@@ -59,7 +60,7 @@ fun AuthenticationView() {
                 ) {
                     if (isLoginScreen) {
                         // Login content
-                        LoginView(authAgent)
+                        LoginView(authAgent, navController)
                     } else {
                         // Registration content
                         Text(text = "Register", style = MaterialTheme.typography.titleLarge)

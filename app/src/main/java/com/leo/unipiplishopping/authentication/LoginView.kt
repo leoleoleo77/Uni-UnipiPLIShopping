@@ -1,15 +1,11 @@
 package com.leo.unipiplishopping.authentication
 
-
-import android.net.wifi.hotspot2.pps.Credential.UserCredential
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,21 +15,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.leo.unipiplishopping.NavigationRoute
 import com.leo.unipiplishopping.R
 import com.leo.unipiplishopping.ui.theme.DivaTextField
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
-fun LoginView(authAgent: AuthUtils) {
+fun LoginView(
+    authAgent: AuthUtils,
+    navController: NavHostController
+) {
     var email by remember { mutableStateOf("") }
     var pass by remember { mutableStateOf("") }
     var loginResult by remember {
-        mutableStateOf(AuthResult.Unknown)
-    }
+        mutableStateOf<AuthResult>(AuthResult.Unknown) }
 
     LoginTitle()
     DivaTextField(
@@ -44,11 +46,22 @@ fun LoginView(authAgent: AuthUtils) {
     DivaTextField(
         placeholderResource = R.string.password_label,
         value = pass,
-        onValueChange = { pass = it }
+        onValueChange = { pass = it },
+        isPassword = true
     )
     LoginFailedMessage(loginResult)
     LoginButton {
-        loginResult = authAgent.attemptLogin(email, pass)
+//        navController.navigate(NavigationRoute.HOME)
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = authAgent.attemptLogin(email, pass)
+
+            withContext(Dispatchers.Main) {
+                loginResult = result // Update login result dynamically
+                if (result is AuthResult.Success) {
+                    navController.navigate(NavigationRoute.HOME)
+                }
+            }
+        }
     }
 }
 
