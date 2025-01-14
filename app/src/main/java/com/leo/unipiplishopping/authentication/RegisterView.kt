@@ -28,16 +28,23 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun LoginView(
+fun RegisterView(
     authAgent: AuthUtils,
     navController: NavHostController
 ) {
+    var userName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var pass by remember { mutableStateOf("") }
-    var loginResult by remember {
+    val isLoading = remember { mutableStateOf(false) }
+    var registerResult by remember {
         mutableStateOf<AuthResult>(AuthResult.Unknown) }
 
-    LoginTitle()
+    RegisterTitle()
+    DivaTextField(
+        placeholderResource = R.string.user_name_label,
+        value = userName,
+        onValueChange = { userName = it }
+    )
     DivaTextField(
         placeholderResource = R.string.email_label,
         value = email,
@@ -49,32 +56,51 @@ fun LoginView(
         onValueChange = { pass = it },
         isPassword = true
     )
-    RegisterFailedMessage(loginResult)
-    LoginButton {
-        navController.navigate(NavigationRoute.HOME)
-//        CoroutineScope(Dispatchers.IO).launch {
-//            val result = authAgent.attemptLogin(email, pass)
-//
-//            withContext(Dispatchers.Main) {
-//                loginResult = result // Update login result dynamically
-//                if (result is AuthResult.Success) {
-//                    navController.navigate(NavigationRoute.HOME)
-//                }
-//            }
-//        }
+    RegisterFailedMessage(registerResult)
+    RegisterButton {
+        isLoading.value = true
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = authAgent.attemptRegister(userName, email, pass)
+            withContext(Dispatchers.Main) {
+                isLoading.value = false
+                if (result is AuthResult.Success) {
+                    navController.navigate(NavigationRoute.HOME)
+                } else {
+                    registerResult = AuthResult.Fail
+                }
+            }
+        }
     }
 }
 
 @Composable
-private fun LoginTitle() {
+private fun RegisterTitle() {
     Text(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 16.dp),
         textAlign = TextAlign.Start,
-        text = stringResource(id = R.string.login),
+        text = stringResource(id = R.string.register),
         style = MaterialTheme.typography.titleMedium
     )
+}
+
+@Composable
+private fun RegisterButton(
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary, // Background color
+            contentColor = MaterialTheme.colorScheme.background,
+        )
+    ) {
+        Text(stringResource(id = R.string.continue_label))
+    }
 }
 
 @Composable
@@ -84,29 +110,12 @@ private fun RegisterFailedMessage(authResult: AuthResult) {
     Text(
         modifier = Modifier
             .fillMaxWidth(),
-        text = stringResource(id = R.string.login_failed),
+        text = stringResource(id = R.string.register_failed),
         textAlign = TextAlign.Start,
         style = TextStyle(
-            fontSize = 12.sp,         // Small font size // Optional: bold font weight
-            color = Color.Red        // Red color for error messages
+            fontSize = 12.sp,
+            color = Color.Red
         )
     )
-}
 
-@Composable
-private fun LoginButton(
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.background,
-        )
-    ) {
-        Text(stringResource(id = R.string.continue_label))
-    }
 }

@@ -10,12 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,9 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import com.leo.unipiplishopping.R
 
 @Composable
 fun AuthenticationView(navController: NavHostController) {
@@ -59,45 +57,18 @@ fun AuthenticationView(navController: NavHostController) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     if (isLoginScreen) {
-                        // Login content
                         LoginView(authAgent, navController)
                     } else {
-                        // Registration content
-                        Text(text = "Register", style = MaterialTheme.typography.titleLarge)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        TextField(
-                            value = "",
-                            onValueChange = {},
-                            label = { Text("Name") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        TextField(
-                            value = "",
-                            onValueChange = {},
-                            label = { Text("Email") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        TextField(
-                            value = "",
-                            onValueChange = {},
-                            label = { Text("Password") },
-                            modifier = Modifier.fillMaxWidth(),
-                            visualTransformation = PasswordVisualTransformation()
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(
-                            onClick = { /* Handle registration logic */ },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Register")
-                        }
+                        RegisterView(authAgent, navController)
                     }
                     TextButton(
                         onClick = { isLoginScreen = !isLoginScreen } // Toggle login/register
                     ) {
-                        Text(if (isLoginScreen) "Don't have an account? Register" else "Already have an account? Login")
+                        val changeAuthText =
+                            stringResource(id =
+                                if (isLoginScreen) R.string.create_account_label
+                                else  R.string.login_label)
+                        Text(changeAuthText)
                     }
                 }
             }

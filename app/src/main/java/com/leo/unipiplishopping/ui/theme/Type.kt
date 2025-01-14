@@ -35,8 +35,14 @@ val Typography = Typography(
 )
 
 val DivaTypography = Typography(
-    //defaultFontFamily = FontFamily.Serif, // Customize your font family here
     titleLarge = TextStyle(
+        fontFamily = FontFamily.Serif,
+        fontWeight = FontWeight.Bold,
+        color = Color.White,
+        fontSize = 44.sp,
+        letterSpacing = 4.sp
+    ),
+    titleMedium = TextStyle(
         fontFamily = FontFamily.Serif,
         fontWeight = FontWeight.Bold,
         color = Color.White,

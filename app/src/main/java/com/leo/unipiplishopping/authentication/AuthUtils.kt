@@ -2,6 +2,7 @@ package com.leo.unipiplishopping.authentication
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.tasks.await
 
 class AuthUtils {
@@ -15,10 +16,35 @@ class AuthUtils {
                 AuthResult.Success
             } else {
                 Log.e("Auth", "Email or password is empty")
-                AuthResult.Error
+                AuthResult.Fail
             }
         } catch (e: Exception) {
             Log.e("Auth", "Authentication failed: ${e.message}")
+            AuthResult.Fail
+        }
+    }
+
+    suspend fun attemptRegister(
+        name: String,
+        email: String,
+        password: String
+    ): AuthResult {
+        if (name.isEmpty()) return AuthResult.Fail
+
+        return try {
+            val result = auth.createUserWithEmailAndPassword(email, password).await()
+
+            // Update the user's display name
+            val user = result.user
+            val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .build()
+            user?.updateProfile(profileUpdates)?.await()
+
+            Log.e("Auth","User registered successfully with name: $name")
+            AuthResult.Success
+        } catch (e: Exception) {
+            Log.e("Auth","Register failed ${e.message}")
             AuthResult.Fail
         }
     }
@@ -27,7 +53,6 @@ class AuthUtils {
 sealed class AuthResult {
     data object Success : AuthResult()
     data object Fail : AuthResult()
-    data object Error : AuthResult()
     data object Unknown : AuthResult()
 }
 

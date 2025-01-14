@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">UnipiPLIShopping</string>
+    <string name="home_title">Artworks</string>
     <string name="login">Se connecter</string>
+    <string name="register">Create account</string>
+    <string name="user_name_label">Name</string>
     <string name="email_label">Email</string>
     <string name="password_label">Password</string>
     <string name="continue_label">ok</string>
     <string name="login_failed">Incorrect Credentials</string>
+    <string name="register_failed">Failed to create account</string>
     <string name="create_account_label">Create an account</string>
+    <string name="login_label">Already have an account? Log in</string>
 </resources>

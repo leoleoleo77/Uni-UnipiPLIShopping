@@ -1,64 +1,50 @@
 package com.leo.unipiplishopping.home
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.google.firebase.firestore.FirebaseFirestore
+import com.leo.unipiplishopping.R
 
 @Composable
 fun HomeScreen() {
-    var selectedTab by remember { mutableIntStateOf(1) }
+    val db = FirebaseFirestore.getInstance()
 
-    // Bottom navigation items
-    val tabs = listOf("Home", "Search", "Profile")
-    val icons = listOf(Icons.Filled.Home, Icons.Filled.Search, Icons.Filled.Person)
+    Column (
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.Black)
+    ) {
+        HomeTitle()
+        ArtworkView(db, 0)
+        ArtworkView(db, 1)
+    }
+}
 
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                tabs.forEachIndexed { index, title ->
-                    NavigationBarItem(
-                        icon = { Icon(icons[index], contentDescription = title) },
-                        label = { Text(title) },
-                        selected = selectedTab == index,
-                        onClick = { selectedTab = index }
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
-        if (selectedTab == 1) {
-            ArtView()
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Current Tab: ${tabs[selectedTab]}",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
+@Composable
+private fun HomeTitle() {
+    Row {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp, top = 32.dp),
+            textAlign = TextAlign.Start,
+            text = stringResource(id = R.string.home_title),
+            style = MaterialTheme.typography.titleLarge
+        )
+        //Icon(Icons.Default, null)
     }
 }
