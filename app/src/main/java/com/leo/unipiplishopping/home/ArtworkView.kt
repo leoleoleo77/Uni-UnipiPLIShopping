@@ -53,7 +53,7 @@ fun ArtworkView(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            homeState.value = AppConstants.HOME_ARTWORK_DETAIL
+                            homeState.value = AppConstants.NAVIGATION_ARTWORK_DETAILS
                             selectedArtworkState.value = model
                         }
                 )
@@ -76,7 +76,7 @@ fun ArtworkView(
                     }
                 }
             }
-        } // ?: fail to load image
+        }
     }
 }
 

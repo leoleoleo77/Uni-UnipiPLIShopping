@@ -10,7 +10,7 @@ class AppConstants {
         const val LOGIN = "login"
 
         /* HomeView Constants */
-        const val HOME_DEFAULT = "default"
-        const val HOME_ARTWORK_DETAIL = "artwork_detail"
+        const val NAVIGATION_HOME = "navigation_home"
+        const val NAVIGATION_ARTWORK_DETAILS = "artwork_detail"
     }
 }

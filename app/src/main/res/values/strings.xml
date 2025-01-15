@@ -11,4 +11,7 @@
     <string name="register_failed">Failed to create account</string>
     <string name="create_account_label">Create an account</string>
     <string name="login_label">Already have an account? Log in</string>
+    <string name="profile_details">Profile details</string>
+    <string name="close_button">Close button</string>
+    <string name="buy_label">Buy now for</string>
 </resources>

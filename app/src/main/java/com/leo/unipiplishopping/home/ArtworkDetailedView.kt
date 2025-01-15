@@ -2,139 +2,165 @@ package com.leo.unipiplishopping.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.leo.unipiplishopping.AppConstants
+import com.leo.unipiplishopping.R
 
 @Composable
 fun ArtworkDetailedView(
     artworkModel: ArtworkModel?,
-    navController: NavHostController
+    homeState: MutableState<String>,
 ) {
-    val context = LocalContext.current
-    var isZoomed by remember { mutableStateOf(false) }
-    val scrollState = rememberScrollState()
-    val imageModifier = Modifier
-        .fillMaxWidth()
-        .semantics {
-            if (artworkModel != null) {
-                contentDescription = artworkModel.desc.toString()
-            }
-        }
-        .then(
-            if (isZoomed) {
-                Modifier
-                    .fillMaxHeight() // Fill the height of the screen when zoomed
-                    .horizontalScroll(scrollState) // Allow vertical scrolling when zoomed
-            } else {
-                Modifier
-            }
-        )
-        .pointerInput(Unit) {
-            detectTapGestures(
-                onDoubleTap = {
-                    isZoomed = !isZoomed // Toggle zoom state on double tap
-                }
-            )
-        }
+    if (artworkModel == null) {
+        homeState.value = AppConstants.NAVIGATION_HOME
+        return
+    }
 
-    Box(
+    Column (
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black),
-        contentAlignment = Alignment.Center
+            .background(color = MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.End
     ) {
+        CloseButton(homeState)
+        Artwork(artworkModel)
+        BuyButton(artworkModel) {
 
-        Icon(
-            imageVector = Icons.Default.Close,
+        }
+    }
+}
+
+@Composable
+private fun CloseButton(homeState: MutableState<String>, ) {
+    Icon(
+        imageVector = Icons.Default.Close,
+        contentDescription = null,
+        tint = Color.White,
+        modifier = Modifier
+            .size(88.dp)
+            .clickable {
+                homeState.value = AppConstants.NAVIGATION_HOME
+            }
+            .padding(top = 32.dp),
+    )
+}
+
+@Composable
+private fun Artwork(artworkModel: ArtworkModel) {
+    Column {
+        AsyncImage(
+            model = artworkModel.url,
             contentDescription = null,
-            tint = Color.White,
+            contentScale = ContentScale.FillWidth,
             modifier = Modifier
-                .size(88.dp)
-                .clickable {
-                    navController.navigate("home_screen")
-                }
-                .align(Alignment.TopEnd)
-                .padding(top = 32.dp)
-                .semantics {
-                    if (artworkModel != null) {
-                        contentDescription = artworkModel.desc.toString()
-                    }
-                },
+                .fillMaxWidth(),
         )
+        Caption(artworkModel)
+    }
 
-        Column (
+}
+
+@Composable
+private fun Caption(artworkModel: ArtworkModel) {
+
+    @Composable
+    fun Title() {
+        val artworkName = artworkModel.title
+        val artworkDate = artworkModel.date
+        val title = "$artworkName • $artworkDate"
+
+        Text(
             modifier = Modifier
-                .align(Alignment.BottomStart)
-                .background(Color.White.copy(alpha = 0.1f))
-                .fillMaxWidth()
-        ) {
-            if (artworkModel != null) {
-                Text(
-                    modifier = Modifier
-                        .padding(
-                            top = 8.dp,
-                            bottom = 12.dp,
-                            start = 8.dp
-                        ),
-                    text = artworkModel.title.toString(),
-                    style = TextStyle(
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 2.sp
-                    )
-                )
-            }
-            if (artworkModel != null) {
-                Text(
-                    modifier = Modifier
-                        .padding(
-                            bottom = 64.dp,
-                            start = 8.dp
-                        ),
-                    text = artworkModel.desc.toString(),
-                    style = TextStyle(
-                        color = Color.White,
-                        fontSize = 12.sp,
-                        letterSpacing = 2.sp
-                    )
-                )
-            }
-        }
+                .padding(
+                    top = 8.dp,
+                    bottom = 12.dp,
+                    start = 8.dp
+                ),
+            text = title,
+            style = MaterialTheme.typography.titleSmall
+        )
+    }
 
-        if (artworkModel != null) {
-            AsyncImage(
-                model = artworkModel.url,
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier
-                    .fillMaxWidth(),
+    @Composable
+    fun Description() {
+        val artworkArtist = artworkModel.artist
+        val artworkDescription =
+            artworkModel.description ?: ""
+        val description = "$artworkArtist, $artworkDescription"
+
+        Text(
+            modifier = Modifier
+                .padding(
+                    bottom = 12.dp,
+                    start = 8.dp
+                ),
+            text = description,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+
+    Column (
+        modifier = Modifier
+            .background(
+                MaterialTheme
+                    .colorScheme
+                    .primary
+                    .copy(alpha = 0.1f)
             )
-        }
+            .fillMaxWidth(),
+    ) {
+        Title()
+        Description()
+    }
+}
+
+@Composable
+private fun BuyButton(
+    artworkModel: ArtworkModel,
+    onClick: () -> Unit
+) {
+    val buyNowText = stringResource(id = R.string.buy_label)
+    val artworkPrice = artworkModel.price?.toInt()
+    val buttonText = "$buyNowText $artworkPrice €"
+
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(4.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                bottom = 28.dp,
+                start = 8.dp,
+                end = 8.dp
+            ),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.background,
+        )
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(vertical = 8.dp),
+            text = buttonText,
+            //style = MaterialTheme.typography.labelMedium
+        )
     }
 }

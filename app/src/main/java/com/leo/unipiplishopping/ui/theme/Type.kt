@@ -48,5 +48,23 @@ val DivaTypography = Typography(
         color = Color.White,
         fontSize = 32.sp,
         letterSpacing = 2.sp
+    ),
+    titleSmall = TextStyle(
+        color = Color.White,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Bold,
+        letterSpacing = 2.sp
+    ),
+    bodyMedium = TextStyle(
+        color = Color.White,
+        fontSize = 12.sp,
+        letterSpacing = 2.sp
+    ),
+    labelMedium = TextStyle(
+        color = Color.White,
+        fontSize = 12.sp,
+        letterSpacing = 2.sp,
+        fontWeight = FontWeight.Bold
     )
+
 )
