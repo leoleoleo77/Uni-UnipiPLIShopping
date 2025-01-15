@@ -19,13 +19,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.leo.unipiplishopping.NavigationRoute
+import com.leo.unipiplishopping.AppConstants
 import com.leo.unipiplishopping.R
 import com.leo.unipiplishopping.ui.theme.DivaTextField
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
 fun LoginView(
@@ -51,7 +47,7 @@ fun LoginView(
     )
     RegisterFailedMessage(loginResult)
     LoginButton {
-        navController.navigate(NavigationRoute.HOME)
+        navController.navigate(AppConstants.HOME)
 //        CoroutineScope(Dispatchers.IO).launch {
 //            val result = authAgent.attemptLogin(email, pass)
 //

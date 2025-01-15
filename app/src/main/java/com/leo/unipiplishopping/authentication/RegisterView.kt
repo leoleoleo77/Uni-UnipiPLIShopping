@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.leo.unipiplishopping.NavigationRoute
+import com.leo.unipiplishopping.AppConstants
 import com.leo.unipiplishopping.R
 import com.leo.unipiplishopping.ui.theme.DivaTextField
 import kotlinx.coroutines.CoroutineScope
@@ -64,7 +64,7 @@ fun RegisterView(
             withContext(Dispatchers.Main) {
                 isLoading.value = false
                 if (result is AuthResult.Success) {
-                    navController.navigate(NavigationRoute.HOME)
+                    navController.navigate(AppConstants.HOME)
                 } else {
                     registerResult = AuthResult.Fail
                 }
