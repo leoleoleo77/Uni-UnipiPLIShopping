@@ -70,32 +70,3 @@ fun DivaTheme(content: @Composable () -> Unit) {
         content = content
     )
 }
-
-@Composable
-fun DivaTextField(
-    placeholderResource: Int,
-    value: String,
-    onValueChange: (String) -> Unit,
-    isPassword: Boolean = false
-) {
-    TextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp),
-        value = value,
-        onValueChange = onValueChange,
-        placeholder = ({
-            Text(text = stringResource(id = placeholderResource))
-        }),
-        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.secondary, // Background color when focused
-            unfocusedContainerColor = MaterialTheme.colorScheme.secondary, // Background color when unfocused
-            focusedTextColor = MaterialTheme.colorScheme.primary,    // Text color when focused
-            unfocusedTextColor = MaterialTheme.colorScheme.primary,  // Text color when unfocused
-            cursorColor = MaterialTheme.colorScheme.primary,
-            focusedPlaceholderColor = MaterialTheme.colorScheme.tertiary,
-            unfocusedPlaceholderColor = MaterialTheme.colorScheme.tertiary,// Cursor color
-        )
-    )
-}

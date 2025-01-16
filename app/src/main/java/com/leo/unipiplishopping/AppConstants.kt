@@ -12,5 +12,6 @@ class AppConstants {
         /* HomeView Constants */
         const val NAVIGATION_HOME = "navigation_home"
         const val NAVIGATION_ARTWORK_DETAILS = "artwork_detail"
+        const val NAVIGATION_PROFILE_DETAILS = "profile_detail"
     }
 }

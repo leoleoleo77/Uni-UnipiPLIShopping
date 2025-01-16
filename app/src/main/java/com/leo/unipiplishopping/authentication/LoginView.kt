@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.leo.unipiplishopping.AppConstants
 import com.leo.unipiplishopping.R
-import com.leo.unipiplishopping.ui.theme.DivaTextField
+import com.leo.unipiplishopping.components.DivaTextField
 
 @Composable
 fun LoginView(

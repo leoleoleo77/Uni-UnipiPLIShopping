@@ -15,4 +15,6 @@
     <string name="profile_details">Profile details</string>
     <string name="close_button">Close button</string>
     <string name="buy_label">Buy now for</string>
+    <string name="save_label">Save</string>
+    <string name="location_label">Allow nearby shop notifications</string>
 </resources>

@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.leo.unipiplishopping.AppConstants
 import com.leo.unipiplishopping.R
+import com.leo.unipiplishopping.components.DivaCloseButton
 
 @Composable
 fun ArtworkDetailedView(
@@ -40,27 +41,12 @@ fun ArtworkDetailedView(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.End
     ) {
-        CloseButton(homeState)
+        DivaCloseButton(homeState)
         Artwork(artworkModel)
         BuyButton(artworkModel) {
 
         }
     }
-}
-
-@Composable
-private fun CloseButton(homeState: MutableState<String>, ) {
-    Icon(
-        imageVector = Icons.Default.Close,
-        contentDescription = null,
-        tint = Color.White,
-        modifier = Modifier
-            .size(88.dp)
-            .clickable {
-                homeState.value = AppConstants.NAVIGATION_HOME
-            }
-            .padding(top = 32.dp),
-    )
 }
 
 @Composable
@@ -143,24 +129,17 @@ private fun BuyButton(
 
     Button(
         onClick = onClick,
-        shape = RoundedCornerShape(4.dp),
+        shape = RoundedCornerShape(0.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(
-                bottom = 28.dp,
-                start = 8.dp,
-                end = 8.dp
-            ),
+            .padding(bottom = 28.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.background,
-        )
+            contentColor = MaterialTheme.colorScheme.background)
     ) {
         Text(
             modifier = Modifier
-                .padding(vertical = 8.dp),
-            text = buttonText,
-            //style = MaterialTheme.typography.labelMedium
-        )
+                .padding(top = 8.dp, bottom = 16.dp),
+            text = buttonText)
     }
 }
