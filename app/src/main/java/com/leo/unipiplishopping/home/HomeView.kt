@@ -48,15 +48,13 @@ import com.leo.unipiplishopping.home.Utils.ShopNotificationHandler
 fun HomeView(
     deepLinkArtworkId: String?
 ) {
-    val artworkCollection = FirebaseFirestore
-        .getInstance()
+    val artworkCollection = FirebaseFirestore.getInstance()
         .collection(AppConstants.ARTWORK_COLLECTION)
     val artworkIdList = remember { mutableStateListOf<Int>()}
+    val artworkLocationMap = remember { mutableMapOf<String, GeoPoint>() }
     val homeState = remember { mutableStateOf(AppConstants.NAVIGATION_HOME) }
     val selectedArtworkState = remember { mutableStateOf<ArtworkModel?>(null) }
-    val artworkLocationMap = remember {
-        mutableMapOf<String, GeoPoint>()
-    }
+    val shouldShowNotification = deepLinkArtworkId == null
 
     HandleDeepLink(
         deepLinkArtworkId = deepLinkArtworkId,
@@ -64,28 +62,12 @@ fun HomeView(
         artworkCollection = artworkCollection,
         selectedArtworkState = selectedArtworkState
     )
+
     RequestLocationPermission({},{})
     RequestNotificationPermission{}
-    ShopNotificationHandler(artworkLocationMap)
-    FetchArtworkList(artworkCollection, artworkIdList)
 
-    if (deepLinkArtworkId != null) {
-        LaunchedEffect(deepLinkArtworkId) { // Trigger when deepLinkArtworkId changes
-            artworkCollection.document(deepLinkArtworkId)
-                .get()
-                .addOnSuccessListener { documentSnapshot ->
-                    if (documentSnapshot.exists()) {
-                        selectedArtworkState.value = documentSnapshot.toObject(ArtworkModel::class.java)
-                        homeState.value = AppConstants.NAVIGATION_ARTWORK_DETAILS
-                    } else {
-                        Log.w("HomeView", "Artwork document does not exist")
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.w("HomeView", "Error getting artwork document", e)
-                }
-        }
-    }
+    ShopNotificationHandler(artworkLocationMap, shouldShowNotification)
+    FetchArtworkList(artworkCollection, artworkIdList)
 
     when (homeState.value) {
         AppConstants.NAVIGATION_HOME -> {

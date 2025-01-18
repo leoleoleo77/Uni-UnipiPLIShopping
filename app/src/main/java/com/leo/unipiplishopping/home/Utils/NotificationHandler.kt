@@ -32,12 +32,14 @@ private const val TEN_SECONDS: Long = 10000
 private const val THREE_SECONDS: Long = 3000
 @Composable
 fun ShopNotificationHandler(
-    artworkLocationMap: MutableMap<String, GeoPoint>
+    artworkLocationMap: MutableMap<String, GeoPoint>,
+    shouldShowNotification: Boolean
 ) {
+    if (!shouldShowNotification) return
+
     val thisContext = LocalContext.current
     val fusedLocationProviderClient
         = LocationServices.getFusedLocationProviderClient(thisContext)
-
     val title = stringResource(id = R.string.notification_title)
     val desc1 = stringResource(id = R.string.notification_description1)
     val desc2 = stringResource(id = R.string.notification_description2)
