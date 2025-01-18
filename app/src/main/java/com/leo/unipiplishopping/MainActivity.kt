@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -25,32 +26,20 @@ class MainActivity : ComponentActivity() {
         val deepLinkArtworkId = intent.getStringExtra(AppConstants.DEEPLINK_KEY)
 
         enableEdgeToEdge()
-        setContent {
-            val locale = Locale("en")
-            updateLocale(locale)
-            DivaTheme {
-                MyApp(deepLinkArtworkId)
-            }
-        }
+        setContent { MyApp(deepLinkArtworkId) }
     }
 
-
-    private fun updateLocale(locale: Locale) {
-        val config = resources.configuration
-        val updatedConfig = Configuration(config)
-        updatedConfig.setLocale(locale)
-
-        // Apply the new configuration to the context
-        createConfigurationContext(updatedConfig)
-        resources.updateConfiguration(updatedConfig, resources.displayMetrics)
-    }
 }
 
 @Composable
 fun MyApp(deepLinkArtworkId: String?) {
     val authAgent = AuthUtils()
+    val appPreferences = getAppPreferences(LocalContext.current)
+    val locale = Locale(appPreferences.second)
+    val isDarkMode = appPreferences.first
 
-    MaterialTheme {
+    updateLocale(LocalContext.current, Locale("gr"))
+    DivaTheme(darkTheme = isDarkMode) {
         val navController = rememberNavController()
         val showLogin = deepLinkArtworkId == null && authAgent.getUser() == null
         NavHost(
@@ -62,4 +51,5 @@ fun MyApp(deepLinkArtworkId: String?) {
         }
     }
 }
+
 

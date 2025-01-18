@@ -15,7 +15,6 @@
     <string name="close_button">Close button</string>
     <string name="buy_label">Buy now for</string>
     <string name="save_label">Save</string>
-    <string name="location_label">Allow nearby shop notifications</string>
     <string name="notification_title">There is an Artwork near your location</string>
     <string name="notification_description1">An Artwork is just</string>
     <string name="notification_description2">meters away! Tap for more details</string>

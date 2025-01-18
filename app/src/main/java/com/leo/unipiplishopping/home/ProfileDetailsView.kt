@@ -10,8 +10,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Slider
@@ -21,6 +24,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -28,19 +32,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.leo.unipiplishopping.AppConstants
 import com.leo.unipiplishopping.R
+import com.leo.unipiplishopping.authentication.AuthUtils
 import com.leo.unipiplishopping.components.DivaCloseButton
 import com.leo.unipiplishopping.components.DivaTextField
+import com.leo.unipiplishopping.getAppPreferences
 
 @Composable
 fun ProfileDetails(
     homeState: MutableState<String>,
+    authAgent: AuthUtils,
 ) {
     // State variables for text fields and slider
-    var userName by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
+    var userName by remember { mutableStateOf(authAgent.getUser()?.displayName) }
+    var email by remember { mutableStateOf(authAgent.getUser()?.email) }
     var pass by remember { mutableStateOf("") }
-    var isRadioSelected by remember { mutableStateOf(false) }
-
+    val sharedPreferences = getAppPreferences(LocalContext.current)
+    val darkMode = sharedPreferences.first
+    var isRadioSelected by remember { mutableStateOf(darkMode) }
+    val language = sharedPreferences.second
+    var languageSelected by remember { mutableStateOf(language) }
     // Screen content
     Column(
         modifier = Modifier
@@ -54,19 +64,18 @@ fun ProfileDetails(
         ) {
             DivaTextField(
                 placeholderResource = R.string.user_name_label,
-                value = userName,
+                value = userName ?: "",
                 onValueChange = { userName = it }
             )
             DivaTextField(
                 placeholderResource = R.string.email_label,
-                value = email,
+                value = email ?: "",
                 onValueChange = { email = it }
             )
             DivaTextField(
                 placeholderResource = R.string.password_label,
                 value = pass,
                 onValueChange = { pass = it },
-                isPassword = true
             )
 
             Row(
@@ -74,7 +83,7 @@ fun ProfileDetails(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(id = R.string.location_label),
+                    text = "darkmode",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(end = 8.dp)
                 )
@@ -92,6 +101,8 @@ fun ProfileDetails(
                     style = MaterialTheme.typography.titleSmall,
                 )
             }
+
+            DropdownButtonExample()
 
             // Save Button
             Button(
@@ -129,6 +140,36 @@ private fun Header(
             style = MaterialTheme.typography.titleMedium
         )
         DivaCloseButton(homeState = homeState)
+    }
+}
+
+@Composable
+fun DropdownButtonExample() {
+    val expanded = remember { androidx.compose.runtime.mutableStateOf(false) }
+    val options = listOf("Option 1", "Option 2", "Option 3")
+    val selectedOption = remember { androidx.compose.runtime.mutableStateOf(options[0]) }
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        OutlinedButton(onClick = { expanded.value = !expanded.value }) {
+            Text(text = "Dropdown")
+        }
+
+        DropdownMenu(
+            expanded = expanded.value,
+            onDismissRequest = { expanded.value = false },
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    onClick = {
+                    selectedOption.value = option
+                    expanded.value = false
+                },
+                    text = { Text("waddup") }
+                )
+            }
+        }
+
+        Text(text = "Selected: ${selectedOption.value}", modifier = Modifier.fillMaxWidth().padding(16.dp))
     }
 }
 

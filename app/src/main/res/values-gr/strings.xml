@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">UnipiPLIShopping</string>
-    <string name="home_title">Artworks</string>
+    <string name="home_title">Έργα Τέχνης</string>
     <string name="login">Σύνδεση</string>
     <string name="register">Δημιουργία λογαριασμού</string>
     <string name="user_name_label">Name</string>
@@ -16,7 +16,6 @@
     <string name="close_button">Close button</string>
     <string name="buy_label">Buy now for</string>
     <string name="save_label">Save</string>
-    <string name="location_label">Allow nearby shop notifications</string>
     <string name="notification_title">There is an Artwork near your location</string>
     <string name="notification_description1">An Artwork is just</string>
     <string name="notification_description2">away! Tap for more details</string>

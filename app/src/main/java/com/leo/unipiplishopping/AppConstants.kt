@@ -26,5 +26,13 @@ class AppConstants {
         const val USER_NAME = "userName"
         const val ARTWORK_ID = "artworkId"
         const val TIMESTAMP = "timestamp"
+
+        /*Shared Preferences*/
+        const val APP_PREFERENCES = "app_preferences"
+        const val SP_IS_DARK_MODE = "is_dark_mode"
+        const val SP_LANGUAGE = "language"
+        const val ENGLISH = "en"
+        const val GREEK = "gr"
+        const val FRENCH = "fr"
     }
 }

@@ -96,7 +96,10 @@ fun HomeView(
             )
         }
         AppConstants.NAVIGATION_PROFILE_DETAILS -> {
-            ProfileDetails(homeState = homeState)
+            ProfileDetails(
+                homeState = homeState,
+                authAgent = authAgent
+            )
         }
     }
 }
