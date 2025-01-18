@@ -1,5 +1,6 @@
 package com.leo.unipiplishopping.home
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,11 +13,13 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.leo.unipiplishopping.AppConstants
 import com.leo.unipiplishopping.R
+import com.leo.unipiplishopping.authentication.AuthUtils
 import com.leo.unipiplishopping.components.DivaCloseButton
 import com.leo.unipiplishopping.home.Utils.ArtworkModel
 
@@ -24,11 +27,16 @@ import com.leo.unipiplishopping.home.Utils.ArtworkModel
 fun ArtworkDetailedView(
     artworkModel: ArtworkModel?,
     homeState: MutableState<String>,
+    authAgent: AuthUtils,
+    artworkId: Int
 ) {
     if (artworkModel == null) {
         homeState.value = AppConstants.NAVIGATION_HOME
         return
     }
+
+    val purchasesCollection = authAgent.getPurchasesCollection()
+    val thisContext = LocalContext.current
 
     Column (
         modifier = Modifier
@@ -40,7 +48,16 @@ fun ArtworkDetailedView(
         DivaCloseButton(homeState)
         Artwork(artworkModel)
         BuyButton(artworkModel) {
+            val purchaseData = mapOf(
+                AppConstants.USER_NAME to authAgent.getUser()?.displayName, // Use the fetched user name
+                AppConstants.ARTWORK_ID to artworkId,
+                AppConstants.TIMESTAMP to System.currentTimeMillis()
+            )
 
+            purchasesCollection.add(purchaseData)
+                .addOnSuccessListener {
+                    Toast.makeText(thisContext, "Purchase recorded!", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 }

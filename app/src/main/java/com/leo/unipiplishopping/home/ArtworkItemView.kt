@@ -30,7 +30,8 @@ fun ArtworkView(
     artworkRef: DocumentReference,
     artworkLocationMap: MutableMap<String, GeoPoint>,
     homeState: MutableState<String>,
-    selectedArtworkState: MutableState<ArtworkModel?>
+    selectedArtworkState: MutableState<ArtworkModel?>,
+    selectedArtworkId: MutableState<Int>
 ) {
     val artworkModelState = remember { mutableStateOf<ArtworkModel?>(null) }
 
@@ -58,6 +59,7 @@ fun ArtworkView(
                         .clickable {
                             homeState.value = AppConstants.NAVIGATION_ARTWORK_DETAILS
                             selectedArtworkState.value = model
+                            selectedArtworkId.value = artworkRef.id.toInt()
                         }
                 )
                 // Add a chip in the top-left corner

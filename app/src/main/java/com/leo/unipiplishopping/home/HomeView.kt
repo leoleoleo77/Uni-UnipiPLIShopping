@@ -1,7 +1,12 @@
 package com.leo.unipiplishopping.home
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +36,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,22 +45,24 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.leo.unipiplishopping.AppConstants
 import com.leo.unipiplishopping.R
+import com.leo.unipiplishopping.authentication.AuthUtils
 import com.leo.unipiplishopping.home.Utils.ArtworkModel
-import com.leo.unipiplishopping.home.Utils.RequestLocationPermission
-import com.leo.unipiplishopping.home.Utils.RequestNotificationPermission
 import com.leo.unipiplishopping.home.Utils.ShopNotificationHandler
+import com.leo.unipiplishopping.home.Utils.areLocationPermissionsGranted
+import com.leo.unipiplishopping.home.Utils.areNotificationPermissionsGranted
 
 @SuppressLint("InlinedApi")
 @Composable
 fun HomeView(
+    authAgent: AuthUtils,
     deepLinkArtworkId: String?
 ) {
-    val artworkCollection = FirebaseFirestore.getInstance()
-        .collection(AppConstants.ARTWORK_COLLECTION)
+    val artworkCollection = authAgent.getArtworkCollection()
     val artworkIdList = remember { mutableStateListOf<Int>()}
     val artworkLocationMap = remember { mutableMapOf<String, GeoPoint>() }
     val homeState = remember { mutableStateOf(AppConstants.NAVIGATION_HOME) }
     val selectedArtworkState = remember { mutableStateOf<ArtworkModel?>(null) }
+    val selectedArtworkId = remember { mutableStateOf(0) }
     val shouldShowNotification = deepLinkArtworkId == null
 
     HandleDeepLink(
@@ -63,9 +72,7 @@ fun HomeView(
         selectedArtworkState = selectedArtworkState
     )
 
-    RequestLocationPermission({},{})
-    RequestNotificationPermission{}
-
+    RequestPermissions()
     ShopNotificationHandler(artworkLocationMap, shouldShowNotification)
     FetchArtworkList(artworkCollection, artworkIdList)
 
@@ -76,17 +83,20 @@ fun HomeView(
                 artworkLocationMap = artworkLocationMap,
                 artworkData = artworkCollection,
                 homeState = homeState,
-                selectedArtworkState = selectedArtworkState
+                selectedArtworkState = selectedArtworkState,
+                selectedArtworkId = selectedArtworkId,
             )
         }
         AppConstants.NAVIGATION_ARTWORK_DETAILS -> {
             ArtworkDetailedView(
                 artworkModel = selectedArtworkState.value,
+                artworkId = selectedArtworkId.value,
                 homeState = homeState,
+                authAgent = authAgent
             )
         }
         AppConstants.NAVIGATION_PROFILE_DETAILS -> {
-            ProfileDetails(homeState = homeState,)
+            ProfileDetails(homeState = homeState)
         }
     }
 }
@@ -119,7 +129,8 @@ private fun ArtworksFeed(
     artworkLocationMap: MutableMap<String, GeoPoint>,
     artworkData: CollectionReference,
     homeState: MutableState<String>,
-    selectedArtworkState: MutableState<ArtworkModel?>
+    selectedArtworkState: MutableState<ArtworkModel?>,
+    selectedArtworkId: MutableState<Int>
 ) {
     Column(
         modifier = Modifier
@@ -134,6 +145,7 @@ private fun ArtworksFeed(
                 artworkLocationMap = artworkLocationMap,
                 homeState = homeState,
                 selectedArtworkState = selectedArtworkState,
+                selectedArtworkId = selectedArtworkId,
             )
         }
     }
@@ -199,5 +211,27 @@ private fun HandleDeepLink(
             .addOnFailureListener { e ->
                 Log.w("HomeView", "Error getting artwork document", e)
             }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Composable
+fun RequestPermissions() {
+    if (areNotificationPermissionsGranted(LocalContext.current) ||
+        areLocationPermissionsGranted(LocalContext.current)) return
+    // Create a stateful launcher using rememberLauncherForActivityResult
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) {}
+
+    // Launch the permission request on composition
+    LaunchedEffect(Unit) {
+        locationPermissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+        )
     }
 }

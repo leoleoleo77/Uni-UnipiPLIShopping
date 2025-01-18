@@ -30,6 +30,7 @@ import kotlinx.coroutines.delay
 
 private const val TEN_SECONDS: Long = 10000
 private const val THREE_SECONDS: Long = 3000
+
 @Composable
 fun ShopNotificationHandler(
     artworkLocationMap: MutableMap<String, GeoPoint>,
@@ -87,7 +88,10 @@ fun ShopNotificationHandler(
     LaunchedEffect(key1 = Unit, block = {
         while (true) {
             delay(THREE_SECONDS)
-            if (artworkLocationMap.isNotEmpty()) {
+            if (artworkLocationMap.isNotEmpty() &&
+                areNotificationPermissionsGranted(thisContext) &&
+                areLocationPermissionsGranted(thisContext)
+            ) {
                 getCurrentLocation(
                     fusedLocationProviderClient = fusedLocationProviderClient,
                     context = thisContext,
@@ -106,25 +110,8 @@ fun ShopNotificationHandler(
     })
 }
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@Composable
-fun RequestNotificationPermission(onGranted: () -> Unit) {
-    if (areNotificationPermissionsGranted(LocalContext.current)) return
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            onGranted()
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-    }
-}
-
 @SuppressLint("InlinedApi")
-private fun areNotificationPermissionsGranted(context: Context): Boolean {
+fun areNotificationPermissionsGranted(context: Context): Boolean {
     return ActivityCompat.checkSelfPermission(
         context, Manifest.permission.POST_NOTIFICATIONS
     ) == PackageManager.PERMISSION_GRANTED

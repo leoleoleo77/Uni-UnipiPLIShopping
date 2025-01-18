@@ -69,6 +69,7 @@ fun RegisterView(
                 } else {
                     registerResult = AuthResult.Fail
                 }
+                println(authAgent.getUser()?.metadata)
             }
         }
     }

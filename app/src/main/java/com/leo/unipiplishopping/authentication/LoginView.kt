@@ -52,17 +52,17 @@ fun LoginView(
     )
     RegisterFailedMessage(loginResult)
     LoginButton {
-        navController.navigate(AppConstants.HOME)
-//        CoroutineScope(Dispatchers.IO).launch {
-//            val result = authAgent.attemptLogin(email, pass)
-//
-//            withContext(Dispatchers.Main) {
-//                loginResult = result // Update login result dynamically
-//                if (result is AuthResult.Success) {
-//                    navController.navigate(AppConstants.HOME)
-//                }
-//            }
-//        }
+ //       navController.navigate(AppConstants.HOME)
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = authAgent.attemptLogin(email, pass)
+
+            withContext(Dispatchers.Main) {
+                loginResult = result // Update login result dynamically
+                if (result is AuthResult.Success) {
+                    navController.navigate(AppConstants.HOME)
+                }
+            }
+        }
     }
 }
 

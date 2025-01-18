@@ -4,6 +4,7 @@ class AppConstants {
     companion object {
         /* Database Constants */
         const val ARTWORK_COLLECTION = "artwork"
+        const val PURCHASES_COLLECTION = "purchases"
 
         /* Navigation Constants */
         const val HOME = "home"
@@ -20,5 +21,10 @@ class AppConstants {
 
         /* Deeplink Constants */
         const val DEEPLINK_KEY = "ARTWORK_ID"
+
+        /* Purchases Entry Constants*/
+        const val USER_NAME = "userName"
+        const val ARTWORK_ID = "artworkId"
+        const val TIMESTAMP = "timestamp"
     }
 }

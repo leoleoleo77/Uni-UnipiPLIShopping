@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.leo.unipiplishopping.authentication.AuthUtils
 import com.leo.unipiplishopping.authentication.AuthenticationView
 import com.leo.unipiplishopping.home.HomeView
 import com.leo.unipiplishopping.ui.theme.DivaTheme
@@ -47,16 +48,17 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MyApp(deepLinkArtworkId: String?) {
-    // Material theme applied
+    val authAgent = AuthUtils()
+
     MaterialTheme {
         val navController = rememberNavController()
-
+        val showLogin = deepLinkArtworkId == null && authAgent.getUser() == null
         NavHost(
             navController = navController,
-            startDestination = if (deepLinkArtworkId == null) AppConstants.LOGIN else AppConstants.HOME
+            startDestination = if (showLogin) AppConstants.LOGIN else AppConstants.HOME
         ) {
-            composable(AppConstants.HOME) { HomeView(deepLinkArtworkId) }
-            composable(AppConstants.LOGIN) { AuthenticationView(navController) }
+            composable(AppConstants.HOME) { HomeView(authAgent, deepLinkArtworkId) }
+            composable(AppConstants.LOGIN) { AuthenticationView(authAgent, navController) }
         }
     }
 }

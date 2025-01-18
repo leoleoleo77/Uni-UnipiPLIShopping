@@ -27,14 +27,16 @@ import androidx.navigation.NavHostController
 import com.leo.unipiplishopping.R
 
 @Composable
-fun AuthenticationView(navController: NavHostController) {
+fun AuthenticationView(
+    authAgent: AuthUtils,
+    navController: NavHostController
+) {
     // State to determine whether to show login or registration
     var isLoginScreen by remember { mutableStateOf(true) }
-    val authAgent = AuthUtils()
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background, // Optional, defaults to black if using dark mode
-        contentWindowInsets = WindowInsets(0) // Ignore all system insets
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0)
 
     ) { padding ->
         Column {
@@ -45,15 +47,11 @@ fun AuthenticationView(navController: NavHostController) {
                     .padding(padding)
                     .background(color = Color.Black),
                 contentAlignment = Alignment.TopCenter
-                //contentAlignment = BiasAlignment(0f, 0.2f)
             ) {
                 // Dynamic box content
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(0.7f), // Width relative to screen width
-                    //.padding()
-                    //.background(Color.White, shape = MaterialTheme.shapes.medium),
-                    //.padding(24.dp), // Padding inside the box
+                        .fillMaxWidth(0.7f),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     if (isLoginScreen) {
@@ -62,7 +60,7 @@ fun AuthenticationView(navController: NavHostController) {
                         RegisterView(authAgent, navController)
                     }
                     TextButton(
-                        onClick = { isLoginScreen = !isLoginScreen } // Toggle login/register
+                        onClick = { isLoginScreen = !isLoginScreen }
                     ) {
                         val changeAuthText =
                             stringResource(id =

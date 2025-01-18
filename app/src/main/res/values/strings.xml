@@ -19,4 +19,5 @@
     <string name="notification_title">There is an Artwork near your location</string>
     <string name="notification_description1">An Artwork is just</string>
     <string name="notification_description2">meters away! Tap for more details</string>
+    <string name="purchase_success">Purchase Complete</string>
 </resources>
