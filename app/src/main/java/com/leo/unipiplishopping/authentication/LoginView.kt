@@ -23,6 +23,10 @@ import androidx.navigation.NavHostController
 import com.leo.unipiplishopping.AppConstants
 import com.leo.unipiplishopping.R
 import com.leo.unipiplishopping.components.DivaTextField
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun LoginView(
@@ -55,7 +59,7 @@ fun LoginView(
 //            withContext(Dispatchers.Main) {
 //                loginResult = result // Update login result dynamically
 //                if (result is AuthResult.Success) {
-//                    navController.navigate(NavigationRoute.HOME)
+//                    navController.navigate(AppConstants.HOME)
 //                }
 //            }
 //        }

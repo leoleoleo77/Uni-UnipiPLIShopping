@@ -13,5 +13,12 @@ class AppConstants {
         const val NAVIGATION_HOME = "navigation_home"
         const val NAVIGATION_ARTWORK_DETAILS = "artwork_detail"
         const val NAVIGATION_PROFILE_DETAILS = "profile_detail"
+
+        /* Notification Constants */
+        const val CHANNEL_ID = "id0"
+        const val CHANNEL_NAME = "channel0"
+
+        /* Deeplink Constants */
+        const val DEEPLINK_KEY = "ARTWORK_ID"
     }
 }

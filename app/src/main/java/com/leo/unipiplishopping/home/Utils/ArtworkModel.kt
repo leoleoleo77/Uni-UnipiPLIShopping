@@ -1,4 +1,4 @@
-package com.leo.unipiplishopping.home
+package com.leo.unipiplishopping.home.Utils
 
 import com.google.firebase.firestore.GeoPoint
 

@@ -21,11 +21,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.GeoPoint
 import com.leo.unipiplishopping.AppConstants
+import com.leo.unipiplishopping.home.Utils.ArtworkModel
 
 @Composable
 fun ArtworkView(
     artworkRef: DocumentReference,
+    artworkLocationMap: MutableMap<String, GeoPoint>,
     homeState: MutableState<String>,
     selectedArtworkState: MutableState<ArtworkModel?>
 ) {
@@ -76,6 +79,9 @@ fun ArtworkView(
                     }
                 }
             }
+        }
+        model.shop?.let {
+            artworkLocationMap[artworkRef.id] = it
         }
     }
 }

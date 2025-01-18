@@ -1,5 +1,6 @@
 package com.leo.unipiplishopping.home
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -24,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,45 +33,66 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.leo.unipiplishopping.AppConstants
 import com.leo.unipiplishopping.R
+import com.leo.unipiplishopping.home.Utils.ArtworkModel
+import com.leo.unipiplishopping.home.Utils.RequestLocationPermission
+import com.leo.unipiplishopping.home.Utils.RequestNotificationPermission
+import com.leo.unipiplishopping.home.Utils.ShopNotificationHandler
 
+@SuppressLint("InlinedApi")
 @Composable
 fun HomeView(
-    navController: NavHostController) {
-    val artworkData = FirebaseFirestore
+    deepLinkArtworkId: String?
+) {
+    val artworkCollection = FirebaseFirestore
         .getInstance()
         .collection(AppConstants.ARTWORK_COLLECTION)
-    //var artworkCountState = 0//remember { mutableIntStateOf(0) }
     val artworkIdList = remember { mutableStateListOf<Int>()}
     val homeState = remember { mutableStateOf(AppConstants.NAVIGATION_HOME) }
     val selectedArtworkState = remember { mutableStateOf<ArtworkModel?>(null) }
+    val artworkLocationMap = remember {
+        mutableMapOf<String, GeoPoint>()
+    }
 
-    LaunchedEffect(Unit) {
-        artworkData.get()
-            .addOnSuccessListener { querySnapshot ->
-                var i = 0;
-                while (i < querySnapshot.size()) {
-                    artworkIdList.add(i)
-                    i++
+    HandleDeepLink(
+        deepLinkArtworkId = deepLinkArtworkId,
+        homeState = homeState,
+        artworkCollection = artworkCollection,
+        selectedArtworkState = selectedArtworkState
+    )
+    RequestLocationPermission({},{})
+    RequestNotificationPermission{}
+    ShopNotificationHandler(artworkLocationMap)
+    FetchArtworkList(artworkCollection, artworkIdList)
+
+    if (deepLinkArtworkId != null) {
+        LaunchedEffect(deepLinkArtworkId) { // Trigger when deepLinkArtworkId changes
+            artworkCollection.document(deepLinkArtworkId)
+                .get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        selectedArtworkState.value = documentSnapshot.toObject(ArtworkModel::class.java)
+                        homeState.value = AppConstants.NAVIGATION_ARTWORK_DETAILS
+                    } else {
+                        Log.w("HomeView", "Artwork document does not exist")
+                    }
                 }
-                artworkIdList.shuffle()
-            }
-            .addOnFailureListener { exception ->
-                Log.e("HomeScreen", "Error fetching artwork count", exception)
-            }
+                .addOnFailureListener { e ->
+                    Log.w("HomeView", "Error getting artwork document", e)
+                }
+        }
     }
 
     when (homeState.value) {
         AppConstants.NAVIGATION_HOME -> {
             ArtworksFeed(
                 artworkIdList = artworkIdList,
-                artworkData = artworkData,
+                artworkLocationMap = artworkLocationMap,
+                artworkData = artworkCollection,
                 homeState = homeState,
                 selectedArtworkState = selectedArtworkState
             )
@@ -91,8 +110,31 @@ fun HomeView(
 }
 
 @Composable
+private fun FetchArtworkList(
+    artworkCollection: CollectionReference,
+    artworkIdList: SnapshotStateList<Int>
+) {
+    LaunchedEffect(Unit) {
+        artworkCollection.get()
+            .addOnSuccessListener { querySnapshot ->
+                var i = 0;
+                while (i < querySnapshot.size()) {
+                    artworkIdList.add(i)
+                    i++
+                }
+                artworkIdList.shuffle()
+            }
+            .addOnFailureListener { exception ->
+                Log.e("HomeScreen", "Error fetching artwork count", exception)
+            }
+    }
+}
+
+
+@Composable
 private fun ArtworksFeed(
     artworkIdList: SnapshotStateList<Int>,
+    artworkLocationMap: MutableMap<String, GeoPoint>,
     artworkData: CollectionReference,
     homeState: MutableState<String>,
     selectedArtworkState: MutableState<ArtworkModel?>
@@ -107,6 +149,7 @@ private fun ArtworksFeed(
         artworkIdList.forEachIndexed{_, item ->
             ArtworkView(
                 artworkRef = artworkData.document(item.toString()),
+                artworkLocationMap = artworkLocationMap,
                 homeState = homeState,
                 selectedArtworkState = selectedArtworkState,
             )
@@ -148,5 +191,31 @@ private fun Header(
 
                 )
         }
+    }
+}
+
+@Composable
+private fun HandleDeepLink(
+    deepLinkArtworkId: String?,
+    homeState: MutableState<String>,
+    artworkCollection: CollectionReference,
+    selectedArtworkState: MutableState<ArtworkModel?>
+) {
+    if (deepLinkArtworkId == null) return
+
+    LaunchedEffect(deepLinkArtworkId) {
+        artworkCollection.document(deepLinkArtworkId)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    selectedArtworkState.value = documentSnapshot.toObject(ArtworkModel::class.java)
+                    homeState.value = AppConstants.NAVIGATION_ARTWORK_DETAILS
+                } else {
+                    Log.w("HomeView", "Artwork document does not exist")
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w("HomeView", "Error getting artwork document", e)
+            }
     }
 }

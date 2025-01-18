@@ -20,15 +20,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val intent = intent
+        val deepLinkArtworkId = intent.getStringExtra(AppConstants.DEEPLINK_KEY)
+
         enableEdgeToEdge()
         setContent {
             val locale = Locale("en")
             updateLocale(locale)
             DivaTheme {
-                MyApp()
+                MyApp(deepLinkArtworkId)
             }
         }
     }
+
 
     private fun updateLocale(locale: Locale) {
         val config = resources.configuration
@@ -42,16 +46,16 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyApp() {
+fun MyApp(deepLinkArtworkId: String?) {
     // Material theme applied
     MaterialTheme {
         val navController = rememberNavController()
 
         NavHost(
             navController = navController,
-            startDestination = AppConstants.LOGIN
+            startDestination = if (deepLinkArtworkId == null) AppConstants.LOGIN else AppConstants.HOME
         ) {
-            composable(AppConstants.HOME) { HomeView(navController) }
+            composable(AppConstants.HOME) { HomeView(deepLinkArtworkId) }
             composable(AppConstants.LOGIN) { AuthenticationView(navController) }
         }
     }

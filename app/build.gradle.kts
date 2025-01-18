@@ -51,6 +51,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.accompanist.permissions)
+    implementation(libs.play.services.location)
     implementation(platform(libs.firebase.bom))      // Import BOM
     implementation(libs.firebase.firestore)          // Firestore
     implementation(libs.firebase.analytics)
