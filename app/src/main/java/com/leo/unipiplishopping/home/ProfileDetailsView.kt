@@ -36,88 +36,151 @@ import com.leo.unipiplishopping.authentication.AuthUtils
 import com.leo.unipiplishopping.components.DivaCloseButton
 import com.leo.unipiplishopping.components.DivaTextField
 import com.leo.unipiplishopping.getAppPreferences
+import com.leo.unipiplishopping.toggleDarkMode
+import java.util.Locale
 
 @Composable
 fun ProfileDetails(
     homeState: MutableState<String>,
     authAgent: AuthUtils,
+    toggleDarkMode: () -> Unit,
+    updateAppLocale: (Locale) -> Unit
 ) {
-    // State variables for text fields and slider
+    val thisContext = LocalContext.current
+
     var userName by remember { mutableStateOf(authAgent.getUser()?.displayName) }
     var email by remember { mutableStateOf(authAgent.getUser()?.email) }
     var pass by remember { mutableStateOf("") }
+
     val sharedPreferences = getAppPreferences(LocalContext.current)
-    val darkMode = sharedPreferences.first
-    var isRadioSelected by remember { mutableStateOf(darkMode) }
-    val language = sharedPreferences.second
-    var languageSelected by remember { mutableStateOf(language) }
-    // Screen content
+    var isRadioSelected by remember { mutableStateOf(sharedPreferences.first) }
+    var languageSelected by remember { mutableStateOf(sharedPreferences.second) }
+    val expanded = remember { androidx.compose.runtime.mutableStateOf(false) }
+    val options = listOf("Option 1", "Option 2", "Option 3")
+    val selectedOption = remember { androidx.compose.runtime.mutableStateOf(options[0]) }
+
+    @Composable
+    fun ProfileDetails() {
+        Text(
+            modifier = Modifier.padding(bottom = 8.dp),
+            text = stringResource(R.string.profile_details),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleMedium
+        )
+        DivaTextField(
+            placeholderResource = R.string.user_name_label,
+            value = userName ?: "",
+            onValueChange = { userName = it }
+        )
+        DivaTextField(
+            placeholderResource = R.string.email_label,
+            value = email ?: "",
+            onValueChange = { email = it }
+        )
+        DivaTextField(
+            placeholderResource = R.string.password_label,
+            value = pass,
+            onValueChange = { pass = it },
+        )
+
+        // Save Button
+        Button(
+            onClick = {  },
+            shape = RoundedCornerShape(4.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.background,
+            )
+        ) {
+            Text(stringResource(id = R.string.save_label))
+        }
+    }
+
+    @Composable
+    fun Settings() {
+        Text(
+            modifier = Modifier.padding(bottom = 8.dp),
+            text = stringResource(id = R.string.settings_label),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleMedium
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(id = R.string.dark_mode_label),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            RadioButton(
+                selected = isRadioSelected,
+                onClick = {
+                    isRadioSelected = !isRadioSelected
+                    toggleDarkMode.invoke()
+                },
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = Color.White,
+                    unselectedColor = Color.Gray
+                )
+            )
+            Text(
+                text = if (isRadioSelected) "On" else "Off",
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleSmall,
+            )
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                modifier = Modifier.padding(end = 8.dp),
+                text = stringResource(id = R.string.language_label),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleSmall,
+            )
+
+            Column {
+                OutlinedButton(
+                    onClick = { expanded.value = !expanded.value }
+                ) {
+                    Text(text = selectedOption.value)
+                }
+
+                DropdownMenu(
+                    expanded = expanded.value,
+                    onDismissRequest = { expanded.value = false },
+                ) {
+                    options.forEach { option ->
+                        DropdownMenuItem(
+                            onClick = {
+                                selectedOption.value = option
+                                expanded.value = false
+                            },
+                            text = { Text("waddup") }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Header(homeState)
-        QuarterScreenHeightBox()
+
         Column(
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {
-            DivaTextField(
-                placeholderResource = R.string.user_name_label,
-                value = userName ?: "",
-                onValueChange = { userName = it }
-            )
-            DivaTextField(
-                placeholderResource = R.string.email_label,
-                value = email ?: "",
-                onValueChange = { email = it }
-            )
-            DivaTextField(
-                placeholderResource = R.string.password_label,
-                value = pass,
-                onValueChange = { pass = it },
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "darkmode",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                RadioButton(
-                    selected = isRadioSelected,
-                    onClick = { isRadioSelected = !isRadioSelected },
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = Color.White,
-                        unselectedColor = Color.Gray
-                    )
-                )
-                Text(
-                    text = if (isRadioSelected) "On" else "Off",
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleSmall,
-                )
-            }
-
-            DropdownButtonExample()
-
-            // Save Button
-            Button(
-                onClick = {  },
-                shape = RoundedCornerShape(4.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.background,
-                )
-            ) {
-                Text(stringResource(id = R.string.save_label))
-            }
+            Box (Modifier.height(36.dp))
+            ProfileDetails()
+            Box (Modifier.height(36.dp))
+            Settings()
         }
     }
 }
@@ -132,48 +195,6 @@ private fun Header(
             .statusBarsPadding()
             .padding(start = 16.dp),
         verticalAlignment = Alignment.Bottom,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text(
-            modifier = Modifier.padding(bottom = 8.dp),
-            text = stringResource(R.string.profile_details),
-            style = MaterialTheme.typography.titleMedium
-        )
-        DivaCloseButton(homeState = homeState)
-    }
-}
-
-@Composable
-fun DropdownButtonExample() {
-    val expanded = remember { androidx.compose.runtime.mutableStateOf(false) }
-    val options = listOf("Option 1", "Option 2", "Option 3")
-    val selectedOption = remember { androidx.compose.runtime.mutableStateOf(options[0]) }
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        OutlinedButton(onClick = { expanded.value = !expanded.value }) {
-            Text(text = "Dropdown")
-        }
-
-        DropdownMenu(
-            expanded = expanded.value,
-            onDismissRequest = { expanded.value = false },
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    onClick = {
-                    selectedOption.value = option
-                    expanded.value = false
-                },
-                    text = { Text("waddup") }
-                )
-            }
-        }
-
-        Text(text = "Selected: ${selectedOption.value}", modifier = Modifier.fillMaxWidth().padding(16.dp))
-    }
-}
-
-@Composable
-private fun QuarterScreenHeightBox() {
-    Box(modifier = Modifier.fillMaxHeight(0.25f))
+        horizontalArrangement = Arrangement.End,
+    ) { DivaCloseButton(homeState = homeState) }
 }

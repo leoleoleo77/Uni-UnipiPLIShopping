@@ -94,6 +94,7 @@ private fun Caption(artworkModel: ArtworkModel) {
                     start = 8.dp
                 ),
             text = title,
+            color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.titleSmall
         )
     }
@@ -112,6 +113,7 @@ private fun Caption(artworkModel: ArtworkModel) {
                     start = 8.dp
                 ),
             text = description,
+            color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.bodyMedium
         )
     }

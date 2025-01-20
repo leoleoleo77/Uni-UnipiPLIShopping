@@ -50,19 +50,22 @@ import com.leo.unipiplishopping.home.Utils.ArtworkModel
 import com.leo.unipiplishopping.home.Utils.ShopNotificationHandler
 import com.leo.unipiplishopping.home.Utils.areLocationPermissionsGranted
 import com.leo.unipiplishopping.home.Utils.areNotificationPermissionsGranted
+import java.util.Locale
 
 @SuppressLint("InlinedApi")
 @Composable
 fun HomeView(
     authAgent: AuthUtils,
-    deepLinkArtworkId: String?
+    deepLinkArtworkId: String?,
+    toggleDarkMode: () -> Unit,
+    updateAppLocale: (Locale) -> Unit
 ) {
     val artworkCollection = authAgent.getArtworkCollection()
     val artworkIdList = remember { mutableStateListOf<Int>()}
     val artworkLocationMap = remember { mutableMapOf<String, GeoPoint>() }
     val homeState = remember { mutableStateOf(AppConstants.NAVIGATION_HOME) }
     val selectedArtworkState = remember { mutableStateOf<ArtworkModel?>(null) }
-    val selectedArtworkId = remember { mutableStateOf(0) }
+    val selectedArtworkId = remember { mutableIntStateOf(0) }
     val shouldShowNotification = deepLinkArtworkId == null
 
     HandleDeepLink(
@@ -90,7 +93,7 @@ fun HomeView(
         AppConstants.NAVIGATION_ARTWORK_DETAILS -> {
             ArtworkDetailedView(
                 artworkModel = selectedArtworkState.value,
-                artworkId = selectedArtworkId.value,
+                artworkId = selectedArtworkId.intValue,
                 homeState = homeState,
                 authAgent = authAgent
             )
@@ -98,7 +101,9 @@ fun HomeView(
         AppConstants.NAVIGATION_PROFILE_DETAILS -> {
             ProfileDetails(
                 homeState = homeState,
-                authAgent = authAgent
+                authAgent = authAgent,
+                toggleDarkMode = toggleDarkMode,
+                updateAppLocale = updateAppLocale
             )
         }
     }
@@ -169,6 +174,7 @@ private fun Header(
         Text(
             textAlign = TextAlign.Start,
             text = stringResource(R.string.home_title),
+            color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.titleLarge
         )
         Box (
@@ -184,7 +190,7 @@ private fun Header(
                     .size(40.dp),
                 imageVector = Icons.Default.Person,
                 contentDescription = stringResource(R.string.profile_details),
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.primary,
 
                 )
         }
