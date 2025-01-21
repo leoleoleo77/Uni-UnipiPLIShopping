@@ -22,4 +22,7 @@
     <string name="settings_label">Settings</string>
     <string name="dark_mode_label">Dark Mode:</string>
     <string name="language_label">Language:</string>
+    <string name="english_label">English</string>
+    <string name="greek_label">Greek</string>
+    <string name="french_label">French</string>
 </resources>

@@ -14,6 +14,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -55,9 +56,12 @@ fun ProfileDetails(
     val sharedPreferences = getAppPreferences(LocalContext.current)
     var isRadioSelected by remember { mutableStateOf(sharedPreferences.first) }
     var languageSelected by remember { mutableStateOf(sharedPreferences.second) }
-    val expanded = remember { androidx.compose.runtime.mutableStateOf(false) }
-    val options = listOf("Option 1", "Option 2", "Option 3")
-    val selectedOption = remember { androidx.compose.runtime.mutableStateOf(options[0]) }
+    val expanded = remember { mutableStateOf(false) }
+    val options = listOf(
+        stringResource(R.string.english_label),
+        stringResource(R.string.greek_label),
+        stringResource(R.string.french_label))
+    val selectedOption = remember { mutableStateOf(options[0]) }
 
     @Composable
     fun ProfileDetails() {
@@ -152,14 +156,19 @@ fun ProfileDetails(
                 DropdownMenu(
                     expanded = expanded.value,
                     onDismissRequest = { expanded.value = false },
+                    containerColor = MaterialTheme.colorScheme.secondary,
                 ) {
-                    options.forEach { option ->
+                    options.forEachIndexed { i, language ->
                         DropdownMenuItem(
                             onClick = {
-                                selectedOption.value = option
+                                selectedOption.value = language
                                 expanded.value = false
+                                updateAppLocale.invoke(indexToLocale(i))
                             },
-                            text = { Text("waddup") }
+                            text = { Text(language) },
+                            colors = MenuDefaults.itemColors(
+                                textColor = MaterialTheme.colorScheme.primary,
+                            ),
                         )
                     }
                 }
@@ -197,4 +206,12 @@ private fun Header(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.End,
     ) { DivaCloseButton(homeState = homeState) }
+}
+
+private fun indexToLocale(index: Int): Locale {
+    return when(index) {
+        0 -> Locale(AppConstants.ENGLISH)
+        1 -> Locale(AppConstants.GREEK)
+        else -> Locale(AppConstants.FRENCH)
+    }
 }

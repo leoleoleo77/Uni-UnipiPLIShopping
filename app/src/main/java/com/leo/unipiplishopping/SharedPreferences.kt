@@ -17,12 +17,6 @@ fun getAppPreferences(context: Context): Pair<Boolean, String> {
     return Pair(isDarkMode, language)
 }
 
-fun updateLocale(context: Context, locale: Locale) {
-    val config = context.resources.configuration
-    config.setLocale(locale)
-    context.createConfigurationContext(config)
-}
-
 fun toggleDarkMode(context: Context) {
     val sharedPreferences: SharedPreferences =
         context.getSharedPreferences(AppConstants.APP_PREFERENCES, Context.MODE_PRIVATE)

@@ -20,7 +20,10 @@
     <string name="notification_description1">An Artwork is just</string>
     <string name="notification_description2">away! Tap for more details</string>
     <string name="purchase_success">Purchase Complete</string>
-    <string name="settings_label">Settings</string>
+    <string name="settings_label">Ρυθμίσεις</string>
     <string name="dark_mode_label">Dark Mode</string>
     <string name="language_label">Language</string>
+    <string name="english_label">English</string>
+    <string name="greek_label">Greek</string>
+    <string name="french_label">French</string>
 </resources>

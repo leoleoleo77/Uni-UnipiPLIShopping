@@ -1,14 +1,20 @@
 package com.leo.unipiplishopping
 
+import android.app.Activity
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -43,7 +49,7 @@ fun MyApp(deepLinkArtworkId: String?) {
     val isDarkMode = remember { mutableStateOf(appPreferences.first) }
 
     // Manage language preference
-    val locale = remember { mutableStateOf(Locale(appPreferences.second)) }
+    //val currentLocale = remember { mutableStateOf(Locale(appPreferences.second)) }
 
     val toggleDarkMode: () -> Unit = {
         val currentDarkMode = isDarkMode.value
@@ -52,10 +58,15 @@ fun MyApp(deepLinkArtworkId: String?) {
     }
 
     val updateAppLocale: (Locale) -> Unit = { newLocale ->
-        updateLanguage(context, newLocale.language) // Update SharedPreferences
-        locale.value = newLocale
-        updateLocale(context, newLocale) // Apply locale immediately
+        val config = context.resources.configuration
+        Locale.setDefault(newLocale)
+        config.setLocale(newLocale)
+        context.createConfigurationContext(config)
+        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+        updateLanguage(context, newLocale.toLanguageTag())
     }
+
+    updateAppLocale.invoke(Locale(appPreferences.second))
 
     DivaTheme(darkTheme = isDarkMode.value) {
         val navController = rememberNavController()
