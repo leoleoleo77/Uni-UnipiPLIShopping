@@ -35,13 +35,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.leo.unipiplishopping.AppConstants
 import com.leo.unipiplishopping.R
@@ -58,7 +57,8 @@ fun HomeView(
     authAgent: AuthUtils,
     deepLinkArtworkId: String?,
     toggleDarkMode: () -> Unit,
-    updateAppLocale: (Locale) -> Unit
+    updateAppLocale: (Locale) -> Unit,
+    navController: NavHostController
 ) {
     val artworkCollection = authAgent.getArtworkCollection()
     val artworkIdList = remember { mutableStateListOf<Int>()}
@@ -103,7 +103,8 @@ fun HomeView(
                 homeState = homeState,
                 authAgent = authAgent,
                 toggleDarkMode = toggleDarkMode,
-                updateAppLocale = updateAppLocale
+                updateAppLocale = updateAppLocale,
+                navController = navController,
             )
         }
     }
@@ -117,7 +118,7 @@ private fun FetchArtworkList(
     LaunchedEffect(Unit) {
         artworkCollection.get()
             .addOnSuccessListener { querySnapshot ->
-                var i = 0;
+                var i = 0
                 while (i < querySnapshot.size()) {
                     artworkIdList.add(i)
                     i++

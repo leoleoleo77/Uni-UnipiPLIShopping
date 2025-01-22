@@ -25,4 +25,7 @@
     <string name="english_label">English</string>
     <string name="greek_label">Greek</string>
     <string name="french_label">French</string>
+    <string name="logout_label">Log out</string>
+    <string name="cred_update_success">Profile updated</string>
+    <string name="buy_success">Purchased!</string>
 </resources>

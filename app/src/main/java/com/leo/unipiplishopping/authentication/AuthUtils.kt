@@ -17,6 +17,10 @@ class AuthUtils {
         return auth.currentUser
     }
 
+    fun getSession(): FirebaseAuth {
+        return auth
+    }
+
     fun getArtworkCollection(): CollectionReference {
         return db.collection(AppConstants.ARTWORK_COLLECTION)
     }
@@ -62,6 +66,37 @@ class AuthUtils {
             AuthResult.Success
         } catch (e: Exception) {
             Log.e("Auth","Register failed ${e.message}")
+            AuthResult.Fail
+        }
+    }
+
+    suspend fun updateUserCredentials(
+        userName: String?,
+        email: String?,
+        password: String
+    ): AuthResult {
+
+        val currentUser = getUser() ?: return AuthResult.Fail
+
+        val userNameOrEmailInvalid = userName?.isBlank() == true
+                || email?.isBlank() == true
+        return try {
+            if (userNameOrEmailInvalid ||
+                email == null) {
+                return AuthResult.Fail
+            }
+
+            val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(userName)
+                .build()
+            currentUser.apply {
+                updateProfile(profileUpdates).await()
+                updateEmail(email).await()
+                if (password.isNotBlank()) updatePassword(password).await()
+            }
+            AuthResult.Success
+        } catch (e: Exception) {
+            Log.e("Auth", "Update Credentials failed:", e)
             AuthResult.Fail
         }
     }

@@ -15,7 +15,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun DivaTextField(
-    placeholderResource: Int,
+    placeholderResource: Int?,
+    placeHolderText: String? = null,
     value: String,
     onValueChange: (String) -> Unit,
     isPassword: Boolean = false
@@ -27,7 +28,9 @@ fun DivaTextField(
         value = value,
         onValueChange = onValueChange,
         placeholder = ({
-            Text(text = stringResource(id = placeholderResource))
+            placeholderResource?.let {
+                Text(text = stringResource(id = it))
+            } ?: Text(text = placeHolderText ?: "")
         }),
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         colors = TextFieldDefaults.colors(

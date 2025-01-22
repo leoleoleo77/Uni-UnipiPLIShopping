@@ -37,6 +37,7 @@ fun ArtworkDetailedView(
 
     val purchasesCollection = authAgent.getPurchasesCollection()
     val thisContext = LocalContext.current
+    val purchaseMessage = stringResource(id = R.string.purchase_success)
 
     Column (
         modifier = Modifier
@@ -56,7 +57,10 @@ fun ArtworkDetailedView(
 
             purchasesCollection.add(purchaseData)
                 .addOnSuccessListener {
-                    Toast.makeText(thisContext, "Purchase recorded!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        thisContext,
+                        purchaseMessage,
+                        Toast.LENGTH_SHORT).show()
                 }
         }
     }

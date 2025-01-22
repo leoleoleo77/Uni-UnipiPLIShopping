@@ -1,25 +1,18 @@
 package com.leo.unipiplishopping.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,17 +20,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.leo.unipiplishopping.AppConstants
 import com.leo.unipiplishopping.R
+import com.leo.unipiplishopping.authentication.AuthResult
 import com.leo.unipiplishopping.authentication.AuthUtils
 import com.leo.unipiplishopping.components.DivaCloseButton
 import com.leo.unipiplishopping.components.DivaTextField
 import com.leo.unipiplishopping.getAppPreferences
-import com.leo.unipiplishopping.toggleDarkMode
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
@@ -45,23 +42,31 @@ fun ProfileDetails(
     homeState: MutableState<String>,
     authAgent: AuthUtils,
     toggleDarkMode: () -> Unit,
-    updateAppLocale: (Locale) -> Unit
+    updateAppLocale: (Locale) -> Unit,
+    navController: NavHostController
 ) {
-    val thisContext = LocalContext.current
-
     var userName by remember { mutableStateOf(authAgent.getUser()?.displayName) }
     var email by remember { mutableStateOf(authAgent.getUser()?.email) }
     var pass by remember { mutableStateOf("") }
+    var credentialsUpdateResult by remember { mutableStateOf<AuthResult?>(null) }
 
     val sharedPreferences = getAppPreferences(LocalContext.current)
     var isRadioSelected by remember { mutableStateOf(sharedPreferences.first) }
-    var languageSelected by remember { mutableStateOf(sharedPreferences.second) }
     val expanded = remember { mutableStateOf(false) }
     val options = listOf(
         stringResource(R.string.english_label),
         stringResource(R.string.greek_label),
         stringResource(R.string.french_label))
-    val selectedOption = remember { mutableStateOf(options[0]) }
+    val selectedOption = remember { mutableStateOf(
+        options[localeToIndex(sharedPreferences.second)]) }
+
+    val saveLabel = stringResource(id = R.string.save_label)
+    val logoutLabel = stringResource(id = R.string.logout_label)
+    val passLabel = stringResource(id = R.string.password_label)
+    val resultLabel = when (credentialsUpdateResult) {
+        AuthResult.Success -> stringResource(id = R.string.cred_update_success)
+        else -> stringResource(id = R.string.login_failed)
+    }
 
     @Composable
     fun ProfileDetails() {
@@ -82,14 +87,19 @@ fun ProfileDetails(
             onValueChange = { email = it }
         )
         DivaTextField(
-            placeholderResource = R.string.password_label,
+            placeholderResource = null,
+            placeHolderText =  passLabel,
             value = pass,
             onValueChange = { pass = it },
         )
-
-        // Save Button
+        UpdateCredentialsResultMessage(credentialsUpdateResult, resultLabel)
         Button(
-            onClick = {  },
+            onClick = {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val result = authAgent.updateUserCredentials(userName, email, pass)
+                    credentialsUpdateResult = result
+                }
+            },
             shape = RoundedCornerShape(4.dp),
             modifier = Modifier
                 .fillMaxWidth()
@@ -99,7 +109,7 @@ fun ProfileDetails(
                 contentColor = MaterialTheme.colorScheme.background,
             )
         ) {
-            Text(stringResource(id = R.string.save_label))
+            Text(saveLabel)
         }
     }
 
@@ -174,6 +184,26 @@ fun ProfileDetails(
                 }
             }
         }
+        Button(
+            onClick = {
+                authAgent.getSession().signOut()
+                navController.navigate(AppConstants.LOGIN)
+            },
+            shape = RoundedCornerShape(4.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(4.dp)),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.primary,
+            )
+        ) {
+            Text(logoutLabel)
+        }
     }
 
     Column(
@@ -208,10 +238,51 @@ private fun Header(
     ) { DivaCloseButton(homeState = homeState) }
 }
 
+@Composable
+private fun UpdateCredentialsResultMessage(authResult: AuthResult?, resultLabel: String) {
+    when (authResult) {
+        null -> {
+            return
+        }
+        AuthResult.Success -> {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = resultLabel,
+                textAlign = TextAlign.Start,
+                style = TextStyle(
+                    fontSize = 12.sp,         // Small font size // Optional: bold font weight
+                    color = Color.Green        // Red color for error messages
+                )
+            )
+        }
+        else -> {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = resultLabel,
+                textAlign = TextAlign.Start,
+                style = TextStyle(
+                    fontSize = 12.sp,         // Small font size // Optional: bold font weight
+                    color = Color.Red        // Red color for error messages
+                )
+            )
+        }
+    }
+}
+
 private fun indexToLocale(index: Int): Locale {
     return when(index) {
         0 -> Locale(AppConstants.ENGLISH)
         1 -> Locale(AppConstants.GREEK)
         else -> Locale(AppConstants.FRENCH)
+    }
+}
+
+private fun localeToIndex(locale: String): Int {
+    return when(locale) {
+        AppConstants.ENGLISH -> 0
+        AppConstants.GREEK -> 1
+        else -> 2
     }
 }
