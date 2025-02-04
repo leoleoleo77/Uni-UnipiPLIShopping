@@ -23,7 +23,7 @@ import com.leo.unipiplishopping.AppConstants
 import com.leo.unipiplishopping.R
 import com.leo.unipiplishopping.authentication.AuthUtils
 import com.leo.unipiplishopping.components.DivaCloseButton
-import com.leo.unipiplishopping.home.Utils.ArtworkModel
+import com.leo.unipiplishopping.home.utils.ArtworkModel
 
 @Composable
 fun ArtworkDetailedView(

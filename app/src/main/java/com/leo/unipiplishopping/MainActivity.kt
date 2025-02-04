@@ -22,25 +22,26 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // If the activity is created via a deeplink (clicking on the notification)
+        // get the artworkId that should be opened via the intent
         val intent = intent
         val deepLinkArtworkId = intent.getStringExtra(AppConstants.DEEPLINK_KEY)
 
         enableEdgeToEdge()
         setContent { MyApp(deepLinkArtworkId) }
     }
-
 }
 
 @Composable
 fun MyApp(deepLinkArtworkId: String?) {
-    val authAgent = AuthUtils()
     val context = LocalContext.current
+    val authAgent = AuthUtils()
     val appPreferences = getAppPreferences(context)
     val isDarkMode = remember { mutableStateOf(appPreferences.first) }
 
     val toggleDarkMode: () -> Unit = {
         val currentDarkMode = isDarkMode.value
-        toggleDarkMode(context) // Update SharedPreferences
+        saveSelectedColorMode(context) // Update SharedPreferences
         isDarkMode.value = !currentDarkMode // Update state
     }
 
@@ -50,7 +51,7 @@ fun MyApp(deepLinkArtworkId: String?) {
         config.setLocale(newLocale)
         context.createConfigurationContext(config)
         context.resources.updateConfiguration(config, context.resources.displayMetrics)
-        updateLanguage(context, newLocale.toLanguageTag())
+        saveSelectedLanguage(context, newLocale.toLanguageTag()) // Update SharedPreferences
     }
 
     updateAppLocale.invoke(Locale(appPreferences.second))

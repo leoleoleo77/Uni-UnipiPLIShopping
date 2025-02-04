@@ -91,6 +91,7 @@ class AuthUtils {
                 .build()
             currentUser.apply {
                 updateProfile(profileUpdates).await()
+                // Deprecated because modern systems need verification
                 updateEmail(email).await()
                 if (password.isNotBlank()) updatePassword(password).await()
             }

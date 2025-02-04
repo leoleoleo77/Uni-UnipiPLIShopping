@@ -52,7 +52,7 @@ fun LoginView(
     )
     RegisterFailedMessage(loginResult)
     LoginButton {
- //       navController.navigate(AppConstants.HOME)
+        // check the credential entered by the user asynchronously
         CoroutineScope(Dispatchers.IO).launch {
             val result = authAgent.attemptLogin(email, pass)
 
@@ -88,7 +88,7 @@ private fun RegisterFailedMessage(authResult: AuthResult) {
         text = stringResource(id = R.string.login_failed),
         textAlign = TextAlign.Start,
         style = TextStyle(
-            fontSize = 12.sp,         // Small font size // Optional: bold font weight
+            fontSize = 12.sp,         // Small font size
             color = Color.Red        // Red color for error messages
         )
     )

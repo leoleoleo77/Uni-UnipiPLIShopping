@@ -1,4 +1,4 @@
-package com.leo.unipiplishopping.home.Utils
+package com.leo.unipiplishopping.home.utils
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -11,9 +11,6 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
@@ -28,7 +25,6 @@ import com.leo.unipiplishopping.MainActivity
 import com.leo.unipiplishopping.R
 import kotlinx.coroutines.delay
 
-private const val TEN_SECONDS: Long = 10000
 private const val THREE_SECONDS: Long = 3000
 
 @Composable
@@ -85,6 +81,9 @@ fun ShopNotificationHandler(
         }
     }
 
+    // The first time the app is launched it may take some time for the
+    // user to accept the permissions, so in order to not miss the notification
+    // there is a check every three seconds.
     LaunchedEffect(key1 = Unit, block = {
         while (true) {
             delay(THREE_SECONDS)
@@ -104,7 +103,7 @@ fun ShopNotificationHandler(
                 )
                 break
             } else {
-                continue;
+                continue
             }
         }
     })

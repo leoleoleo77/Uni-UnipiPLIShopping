@@ -3,12 +3,10 @@ package com.leo.unipiplishopping.authentication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -48,7 +46,6 @@ fun AuthenticationView(
                     .background(color = Color.Black),
                 contentAlignment = Alignment.TopCenter
             ) {
-                // Dynamic box content
                 Column(
                     modifier = Modifier
                         .fillMaxWidth(0.7f),

@@ -23,7 +23,7 @@ import coil.compose.AsyncImage
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.GeoPoint
 import com.leo.unipiplishopping.AppConstants
-import com.leo.unipiplishopping.home.Utils.ArtworkModel
+import com.leo.unipiplishopping.home.utils.ArtworkModel
 
 @Composable
 fun ArtworkView(
@@ -86,10 +86,4 @@ fun ArtworkView(
             artworkLocationMap[artworkRef.id] = it
         }
     }
-}
-
-enum class ArtworkState {
-    Loading,
-    Success,
-    Fail
 }

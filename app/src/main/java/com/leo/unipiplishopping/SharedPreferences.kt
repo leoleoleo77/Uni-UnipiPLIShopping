@@ -2,7 +2,6 @@ package com.leo.unipiplishopping
 
 import android.content.Context
 import android.content.SharedPreferences
-import java.util.Locale
 
 fun getAppPreferences(context: Context): Pair<Boolean, String> {
     val sharedPreferences: SharedPreferences =
@@ -17,7 +16,7 @@ fun getAppPreferences(context: Context): Pair<Boolean, String> {
     return Pair(isDarkMode, language)
 }
 
-fun toggleDarkMode(context: Context) {
+fun saveSelectedColorMode(context: Context) {
     val sharedPreferences: SharedPreferences =
         context.getSharedPreferences(AppConstants.APP_PREFERENCES, Context.MODE_PRIVATE)
 
@@ -30,7 +29,7 @@ fun toggleDarkMode(context: Context) {
 }
 
 
-fun updateLanguage(context: Context, language: String) {
+fun saveSelectedLanguage(context: Context, language: String) {
     val sharedPreferences: SharedPreferences =
         context.getSharedPreferences(AppConstants.APP_PREFERENCES, Context.MODE_PRIVATE)
 

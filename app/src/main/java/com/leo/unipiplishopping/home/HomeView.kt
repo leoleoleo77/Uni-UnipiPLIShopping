@@ -45,10 +45,10 @@ import com.google.firebase.firestore.GeoPoint
 import com.leo.unipiplishopping.AppConstants
 import com.leo.unipiplishopping.R
 import com.leo.unipiplishopping.authentication.AuthUtils
-import com.leo.unipiplishopping.home.Utils.ArtworkModel
-import com.leo.unipiplishopping.home.Utils.ShopNotificationHandler
-import com.leo.unipiplishopping.home.Utils.areLocationPermissionsGranted
-import com.leo.unipiplishopping.home.Utils.areNotificationPermissionsGranted
+import com.leo.unipiplishopping.home.utils.ArtworkModel
+import com.leo.unipiplishopping.home.utils.ShopNotificationHandler
+import com.leo.unipiplishopping.home.utils.areLocationPermissionsGranted
+import com.leo.unipiplishopping.home.utils.areNotificationPermissionsGranted
 import java.util.Locale
 
 @SuppressLint("InlinedApi")
@@ -68,6 +68,8 @@ fun HomeView(
     val selectedArtworkId = remember { mutableIntStateOf(0) }
     val shouldShowNotification = deepLinkArtworkId == null
 
+    // If deepLinkArtworkId != null then the activity was created by a deeplink
+    // so open the corresponding artwork detailed view
     HandleDeepLink(
         deepLinkArtworkId = deepLinkArtworkId,
         homeState = homeState,
@@ -110,6 +112,8 @@ fun HomeView(
     }
 }
 
+// Gets the artwork collection from Firestore asynchronously
+// also shuffles the list to spice up the user experience
 @Composable
 private fun FetchArtworkList(
     artworkCollection: CollectionReference,

@@ -1,13 +1,9 @@
-package com.leo.unipiplishopping.home.Utils
+package com.leo.unipiplishopping.home.utils
 
 import android.content.pm.PackageManager
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.Composable
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.compose.runtime.LaunchedEffect
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Priority

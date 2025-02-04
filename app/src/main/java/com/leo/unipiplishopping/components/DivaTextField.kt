@@ -13,6 +13,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
+// Generic textField
 @Composable
 fun DivaTextField(
     placeholderResource: Int?,
@@ -40,7 +41,7 @@ fun DivaTextField(
             unfocusedTextColor = MaterialTheme.colorScheme.primary,  // Text color when unfocused
             cursorColor = MaterialTheme.colorScheme.primary,
             focusedPlaceholderColor = MaterialTheme.colorScheme.tertiary,
-            unfocusedPlaceholderColor = MaterialTheme.colorScheme.tertiary,// Cursor color
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.tertiary,
         )
     )
 }
